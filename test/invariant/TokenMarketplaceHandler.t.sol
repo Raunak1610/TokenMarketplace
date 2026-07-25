@@ -2,8 +2,8 @@
 pragma solidity =0.8.34;
 
 import {Test} from "forge-std/Test.sol";
-import {TokenMarketplace} from "../src/TokenMarketplace.sol";
-import {OrderInfo} from "../src/types/Trade.sol";
+import {TokenMarketplace} from "../../src/TokenMarketplace.sol";
+import {OrderInfo} from "../../src/types/Trade.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 
 contract MarketplaceHandler is Test {
@@ -17,8 +17,8 @@ contract MarketplaceHandler is Test {
     uint256 public openOrderTokens;
 
     constructor(ERC20Mock _token, TokenMarketplace _marketplace) {
-         token = _token;
-         marketplace = _marketplace;
+        token = _token;
+        marketplace = _marketplace;
     }
 
     function buyFromMarketplace(uint256 amount) public {
@@ -31,14 +31,15 @@ contract MarketplaceHandler is Test {
         vm.prank(buyer);
         marketplace.buyTokensFromMarketplace{value: amount * 1 ether}(amount);
 
-        marketplaceTokensBought+=amount;
+        marketplaceTokensBought += amount;
     }
+
     function createSellOrder(uint256 amount) public {
         uint256 sellerBalance = token.balanceOf(seller);
         if (sellerBalance == 0) return;
 
         amount = bound(amount, 1, sellerBalance);
-        
+
         vm.startPrank(seller);
         token.approve(address(marketplace), amount);
         marketplace.createSellOrder(amount);
@@ -47,7 +48,7 @@ contract MarketplaceHandler is Test {
         openOrderTokens += amount;
     }
 
-     function buyFromSeller(uint256 orderSeed, uint256 amount) public {
+    function buyFromSeller(uint256 orderSeed, uint256 amount) public {
         uint256 orderCount = marketplace.getNumberOfCreatedOrders();
         if (orderCount == 0) return;
 
@@ -58,14 +59,14 @@ contract MarketplaceHandler is Test {
         if (!order.isActive || order.numberOfTokensToSell == 0) return;
 
         amount = bound(amount, 1, order.numberOfTokensToSell);
-        
+
         vm.deal(buyer, amount * 1 ether);
         vm.prank(buyer);
-        marketplace.buyTokensFromSellOrderCreated{value: amount * 1 ether}(orderId, amount);
+        marketplace.buyTokensFromSellOrder{value: amount * 1 ether}(orderId, amount);
         openOrderTokens -= amount;
-     }
+    }
 
-     function cancelSellOrder(uint256 orderSeed) public {
+    function cancelSellOrder(uint256 orderSeed) public {
         uint256 orderCount = marketplace.getNumberOfCreatedOrders();
         if (orderCount == 0) return;
 
@@ -78,7 +79,5 @@ contract MarketplaceHandler is Test {
         marketplace.cancelSellOrder(orderId);
 
         openOrderTokens -= order.numberOfTokensToSell;
-     }
-
-     
+    }
 }

@@ -7,14 +7,12 @@ import {HelperConfig} from "./HelperConfig.s.sol";
 
 contract TokenMarketplaceScript is Script {
     function run() public {
+        HelperConfig helperConfig = new HelperConfig();
+        HelperConfig.NetworkConfig memory config =
+            block.chainid == helperConfig.LOCAL_CHAIN_ID() ? helperConfig.setUpAnvilConfig() : helperConfig.getConfig();
 
-         HelperConfig helperConfig=new HelperConfig();
-         HelperConfig.Networking memory config=helperConfig.getConfig();
-    
         vm.startBroadcast();
-        TokenMarketplace tokenMarketplace=new TokenMarketplace(config.initialOwner,config.slvToken);
+        new TokenMarketplace(config.slvToken, config.initialOwner);
         vm.stopBroadcast();
     }
 }
-
-

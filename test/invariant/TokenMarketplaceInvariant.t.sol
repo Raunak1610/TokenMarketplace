@@ -3,11 +3,12 @@ pragma solidity =0.8.34;
 
 import {Test} from "forge-std/Test.sol";
 import {StdInvariant} from "forge-std/StdInvariant.sol";
-import {TokenMarketplace} from "../src/TokenMarketplace.sol";
-import {OrderInfo} from "../src/types/Trade.sol";
+import {TokenMarketplace} from "../../src/TokenMarketplace.sol";
+import {OrderInfo} from "../../src/types/Trade.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 
 import {MarketplaceHandler} from "./TokenMarketplaceHandler.t.sol";
+
 contract SLVTokenMarketplaceInvariantTest is StdInvariant, Test {
     ERC20Mock token;
     TokenMarketplace marketplace;
@@ -19,7 +20,7 @@ contract SLVTokenMarketplaceInvariantTest is StdInvariant, Test {
 
     function setUp() public {
         token = new ERC20Mock();
-        marketplace = new TokenMarketplace(address(token),owner);
+        marketplace = new TokenMarketplace(address(token), owner);
 
         token.mint(address(marketplace), INITIAL_MARKETPLACE_TOKENS);
 
@@ -35,25 +36,21 @@ contract SLVTokenMarketplaceInvariantTest is StdInvariant, Test {
     }
 
     function invariant_marketplaceTokenBalanceIsAccountedFor() public view {
-        uint256 expectedBalance = 
-        INITIAL_MARKETPLACE_TOKENS - handler.marketplaceTokensBought() + handler.openOrderTokens();
-        
+        uint256 expectedBalance =
+            INITIAL_MARKETPLACE_TOKENS - handler.marketplaceTokensBought() + handler.openOrderTokens();
+
         assertEq(token.balanceOf(address(marketplace)), expectedBalance);
     }
 
-
-    function invariant_marketplaceCanCoverOpenOrders() public view {    
+    function invariant_marketplaceCanCoverOpenOrders() public view {
         assertGe(token.balanceOf(address(marketplace)), handler.openOrderTokens());
     }
 
     function invariant_marketplaceEthBalanceOnlyFromDirectSales() public view {
-        assertEq(
-            address(marketplace).balance,
-            handler.marketplaceTokensBought() * 1 ether
-        );
+        assertEq(address(marketplace).balance, handler.marketplaceTokensBought() * 1 ether);
     }
 
-     function invariant_ordersHaveConsistentActiveState() public view {
+    function invariant_ordersHaveConsistentActiveState() public view {
         uint256 orderCount = marketplace.getNumberOfCreatedOrders();
 
         for (uint256 i = 0; i < orderCount; i++) {
@@ -66,5 +63,4 @@ contract SLVTokenMarketplaceInvariantTest is StdInvariant, Test {
             }
         }
     }
-
 }
