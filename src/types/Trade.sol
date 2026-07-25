@@ -5,6 +5,6 @@ pragma solidity =0.8.34;
 struct OrderInfo {
     uint256 orderId;
     address seller;
-    uint256 numberofTokensToSell;
+    uint256 numberOfTokensToSell;
     bool isActive;
 }
