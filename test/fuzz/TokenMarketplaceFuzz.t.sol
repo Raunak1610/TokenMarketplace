@@ -7,7 +7,6 @@ import {OrderInfo} from "../../src/types/Trade.sol";
 
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 
-
 contract TokenMarketplaceFuzzTest is Test {
     uint256 constant DEFAULT_NUMBER_OF_MINTED_TOKENS = 1000;
     TokenMarketplace public tokenMarketplace;
