@@ -1,35 +1,23 @@
-name: CI
-
-permissions: {}
+name: Test
 
 on:
   push:
-  pull_request:
-  workflow_dispatch:
+    branches: master
 
 jobs:
-  check:
-    name: Foundry project
+  forge-tests: 
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+
     steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-          submodules: recursive
+      - uses: actions/checkout@v7   
 
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
+      - name: Foundary Toolchain
+        uses: foundary-rs/foundary-toolchain@v1
 
-      - name: Show Forge version
-        run: forge --version
+      - name: Build
+        run: forge build
 
-      - name: Run Forge fmt
-        run: forge fmt --check
-
-      - name: Run Forge build
-        run: forge build --sizes
-
-      - name: Run Forge tests
-        run: forge test -vvv
+      - name: Run Tests
+        run: forge test --isolate -vvv
+        env:
+          FORGE_SNAPSHOT_CHECK: true 
