@@ -11,8 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7   
 
-      - name: Foundary Toolchain
-        uses: foundary-rs/foundary-toolchain@v1
+      - name: Foundry Toolchain
+        uses: foundry-rs/foundry-toolchain@v1
 
       - name: Build
         run: forge build
